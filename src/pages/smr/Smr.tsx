@@ -10,7 +10,8 @@ import {InputWithController} from "../../components/InpurWithController/InpurWit
 import {useState} from "react";
 
 import s from './Smr.module.scss'
-import {Row} from "../../services/types";
+import {RequestCreateRow} from "../../services/types";
+import {useAppDispatch} from "../../services/store";
 
 const smrScheme = z.object({
     rowName: z.string().min(1),
@@ -23,11 +24,13 @@ const smrScheme = z.object({
 export type SmrFormValues = z.infer<typeof smrScheme>;
 
 export const Smr = () => {
-    const {data, refetch} = useGetTreeRowsQuery()
+    const {data} = useGetTreeRowsQuery()
     const [createRow] = useCreateRowMutation()
 
     const [showAddNewRow, setShowAddNewRow] = useState(false)
     const [parentId, setParentId] = useState<number | null>(null)
+
+    const dispatch = useAppDispatch()
 
     if (data && !data.length) {
         console.log('pusto')
@@ -44,38 +47,37 @@ export const Smr = () => {
         resolver: zodResolver(smrScheme),
     });
 
-    const handleAddRow = async (newRow: Row) => {
+    const handleAddRow = async (newRow: RequestCreateRow) => {
         try {
             const response = await createRow(newRow).unwrap();
-            // Обновляем кэшированные данные
-            baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
+
+            dispatch(baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
                 draft.push(response);
-            });
+                console.log(response)
+            }))
         } catch (error) {
             console.error('Failed to add row: ', error);
         }
     };
 
-    const onSubmitSmr = handleSubmit(data => {
+    const onSubmitSmr = handleSubmit(async (data) => {
         console.log('smrScheme', data)
 
         const body = {
-            "equipmentCosts": +data.equipmentCosts,
-            "estimatedProfit": +data.equipmentCosts,
-            "machineOperatorSalary": 0,
-            "mainCosts": 0,
-            "materials": 0,
-            "mimExploitation": 0,
-            "overheads": +data.overheads,
-            "parentId": parentId,
-            "rowName": data.rowName,
-            "salary": +data.salary,
-            "supportCosts": 0,
+            equipmentCosts: +data.equipmentCosts,
+            estimatedProfit: +data.equipmentCosts,
+            machineOperatorSalary: 0,
+            mainCosts: 0,
+            materials: 0,
+            mimExploitation: 0,
+            overheads: +data.overheads,
+            parentId: parentId,
+            rowName: data.rowName,
+            salary: +data.salary,
+            supportCosts: 0,
         }
         console.log('Попытка создания строки')
-        // @ts-ignore
         await handleAddRow(body);
-        // createRow(body)
     });
 
     const addRow = (parentId: number) => {
@@ -101,7 +103,6 @@ export const Smr = () => {
                 {data?.map((row) => (
                     <RecursiveRow addRow={addRow} key={row.id} row={row} level={0}/>
                 ))}
-
 
                 {showAddNewRow && <tr>
                     <td className={s.td}>
