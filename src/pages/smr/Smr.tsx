@@ -1,4 +1,4 @@
-import {baseApi, useCreateRowMutation, useGetTreeRowsQuery} from "../../services/base-api";
+import {baseApi, useCreateRowMutation, useDeleteRowMutation, useGetTreeRowsQuery} from "../../services/base-api";
 import {content} from "../../constants/content";
 import {RecursiveRow} from "../../components/Row";
 
@@ -7,10 +7,10 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Add} from "../../assets/icons/Add";
 import {InputWithController} from "../../components/InpurWithController/InpurWithController";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 import s from './Smr.module.scss'
-import {RequestCreateRow} from "../../services/types";
+import {RecalculatedRows, RequestCreateRow, RowWithChild, TreeResponse} from "../../services/types";
 import {useAppDispatch} from "../../services/store";
 
 const smrScheme = z.object({
@@ -26,15 +26,22 @@ export type SmrFormValues = z.infer<typeof smrScheme>;
 export const Smr = () => {
     const {data} = useGetTreeRowsQuery()
     const [createRow] = useCreateRowMutation()
+    const [deleteRow] = useDeleteRowMutation()
 
     const [showAddNewRow, setShowAddNewRow] = useState(false)
     const [parentId, setParentId] = useState<number | null>(null)
 
     const dispatch = useAppDispatch()
 
-    if (data && !data.length) {
-        console.log('pusto')
-    }
+    console.log(data)
+
+    useEffect(() => {
+
+        if (data && !data.length) {
+            setShowAddNewRow(true)
+        }
+    }, []);
+
 
     const {control, handleSubmit} = useForm<SmrFormValues>({
         defaultValues: {
@@ -47,22 +54,55 @@ export const Smr = () => {
         resolver: zodResolver(smrScheme),
     });
 
+    function findItemById(items: TreeResponse, id: number | null): RowWithChild | null {
+        for (const item of items) {
+            if (item.id === id) {
+                return item;
+            }
+            if (item.child && item.child.length > 0) {
+                const found = findItemById(item.child, id);
+                if (found) {
+                    return found;
+                }
+            }
+        }
+        return null;
+    }
+
+    interface Node {
+        equipmentCosts: number;
+        estimatedProfit: number;
+        id: number;
+        machineOperatorSalary: number;
+        mainCosts: number;
+        materials: number;
+        mimExploitation: number;
+        overheads: number;
+        rowName: string;
+        salary: number;
+        supportCosts: number;
+        total: number;
+        child: Node[];
+    }
+
     const handleAddRow = async (newRow: RequestCreateRow) => {
         try {
-            const response = await createRow(newRow).unwrap();
+            const response: RecalculatedRows = await createRow(newRow).unwrap();
 
-            dispatch(baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
-                draft.push(response);
-                console.log(response)
-            }))
+            const newData = baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
+                setShowAddNewRow(false)
+
+                return draft
+            })
+
+            dispatch(newData)
         } catch (error) {
             console.error('Failed to add row: ', error);
         }
     };
 
-    const onSubmitSmr = handleSubmit(async (data) => {
-        console.log('smrScheme', data)
 
+    const onSubmitSmr = handleSubmit(async (data) => {
         const body = {
             equipmentCosts: +data.equipmentCosts,
             estimatedProfit: +data.equipmentCosts,
@@ -76,15 +116,41 @@ export const Smr = () => {
             salary: +data.salary,
             supportCosts: 0,
         }
-        console.log('Попытка создания строки')
+        console.log('Попытка создания строки у', data.rowName, parentId)
         await handleAddRow(body);
     });
+
 
     const addRow = (parentId: number) => {
         console.log('Попытка добавить что-то', parentId)
         setShowAddNewRow(true)
         setParentId(parentId)
     }
+
+    // const deleteRowHandler = async (id:number) => {
+    //     try {
+    //         const response: RecalculatedRows = await deleteRow(id).unwrap();
+    //
+    //         const newData = baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
+    //             const deleteElementFromDraft = (draft: any, id: number) => {
+    //                 for (let i = 0; i < draft.length; i++) {
+    //                     if (draft[i].id === id) {
+    //                         draft.splice(i, 1);
+    //                         return;
+    //                     }
+    //                     if (draft[i].child && draft[i].child.length > 0) {
+    //                         deleteElementFromDraft(draft[i].child, id);
+    //                     }
+    //                 }
+    //             };
+    //             deleteElementFromDraft(draft, id);
+    //         });
+    //
+    //         dispatch(newData)
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // }
 
     return (<form className={s.smr} onSubmit={onSubmitSmr}>
             <table className={s.table}>
@@ -99,9 +165,8 @@ export const Smr = () => {
                 </tr>
                 </thead>
                 <tbody>
-
                 {data?.map((row) => (
-                    <RecursiveRow addRow={addRow} key={row.id} row={row} level={0}/>
+                    <RecursiveRow key={row.id} addRow={addRow} row={row} level={0}/>
                 ))}
 
                 {showAddNewRow && <tr>
@@ -124,13 +189,10 @@ export const Smr = () => {
                         <InputWithController control={control} name='estimatedProfit' type={'number'}/>
                     </td>
                 </tr>}
-
-
                 </tbody>
             </table>
             <input type={'submit'} style={{display: "none"}}/>
         </form>
-
     )
 };
 

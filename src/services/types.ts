@@ -1,10 +1,10 @@
-export type TreeResponse =RowWithChild[]
+export type TreeResponse = RowWithChild[]
 
-export type RowWithChild = Row & {
+export type RowWithChild = RowResponse & {
     child: RowWithChild[];
 }
 
-export type Row = {
+export type RowResponse = {
     equipmentCosts: number;
     estimatedProfit: number;
     id: number;
@@ -32,3 +32,8 @@ export type RequestCreateRow = {
     salary: number;
     supportCosts: number;
 };
+
+export type RecalculatedRows = {
+    changed: RowResponse[]
+    current: RowResponse
+}

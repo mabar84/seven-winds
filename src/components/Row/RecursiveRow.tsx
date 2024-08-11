@@ -1,10 +1,11 @@
-import {RowWithChild} from "../../services/types";
+import {RecalculatedRows, RowWithChild} from "../../services/types";
 import {Add} from "../../assets/icons/Add";
 import {Delete} from "../../assets/icons/Delete";
-import {useCreateRowMutation, useDeleteRowMutation} from "../../services/base-api";
+import {baseApi, useCreateRowMutation, useDeleteRowMutation} from "../../services/base-api";
 
 import s from './RecursiveRow.module.scss'
 import {errorNotification} from "../../lib/notifications";
+import {useAppDispatch} from "../../services/store";
 
 type RowProps = {
     row: RowWithChild;
@@ -16,15 +17,35 @@ export const RecursiveRow = (props: RowProps) => {
     const {row, level, addRow} = props
 
     const [deleteRow] = useDeleteRowMutation()
+    const dispatch = useAppDispatch()
 
     const addClickHandler = () => {
         addRow(row.id)
     }
 
-    const deleteClickHandler = () => {
-        deleteRow(row.id)
-        errorNotification('Удалено');
+    const deleteClickHandler = async () => {
+        try {
+            const response: RecalculatedRows = await deleteRow(row.id).unwrap();
 
+            const newData = baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
+                const deleteElementFromDraft = (draft: any, id: number) => {
+                    for (let i = 0; i < draft.length; i++) {
+                        if (draft[i].id === id) {
+                            draft.splice(i, 1);
+                            return;
+                        }
+                        if (draft[i].child && draft[i].child.length > 0) {
+                            deleteElementFromDraft(draft[i].child, id);
+                        }
+                    }
+                };
+                deleteElementFromDraft(draft, row.id);
+            });
+
+            dispatch(newData)
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (
@@ -46,8 +67,8 @@ export const RecursiveRow = (props: RowProps) => {
                 <td className={s.td}>{row.overheads}</td>
                 <td className={s.td}>{row.estimatedProfit}</td>
             </tr>
-            {row.child.length > 0 && row.child.map((childRow) => (
-                <RecursiveRow addRow={addRow} key={childRow.id} row={childRow} level={level + 1}/>))
+            {row?.child?.length > 0 && row.child.map((child) => (
+                <RecursiveRow addRow={addRow} key={child.id} row={child} level={level + 1}/>))
             }
         </>
     );

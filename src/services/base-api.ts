@@ -13,18 +13,15 @@ export const baseApi = createApi({
             getTreeRows: builder.query<TreeResponse, void>({
                 query: () => `/v1/outlay-rows/entity/${ID}/row/list`,
             }),
-
             createRow: builder.mutation({
                 query: (body) => {
                     return {
                         body,
                         method: 'POST',
-                        url:  `/v1/outlay-rows/entity/${ID}/row/create`,
+                        url: `/v1/outlay-rows/entity/${ID}/row/create`,
                     }
                 }
             }),
-
-
             deleteRow: builder.mutation({
                 query: (rID) => {
                     return {
@@ -38,4 +35,4 @@ export const baseApi = createApi({
     reducerPath: 'baseApi',
 });
 
-export const {useGetTreeRowsQuery, useCreateRowMutation,useDeleteRowMutation} = baseApi;
+export const {useGetTreeRowsQuery, useCreateRowMutation, useDeleteRowMutation} = baseApi;
