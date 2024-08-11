@@ -1,118 +1,34 @@
-import {baseApi, useCreateRowMutation, useDeleteRowMutation, useGetTreeRowsQuery} from "../../services/base-api";
+import {useEffect} from "react";
+
 import {content} from "../../constants/content";
 import {RecursiveRow} from "../../components/Row";
-
-import {z} from "zod";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
 import {Add} from "../../assets/icons/Add";
 import {InputWithController} from "../../components/InpurWithController/InpurWithController";
-import {useEffect, useState} from "react";
+import {useSmr} from "./useSmr";
 
 import s from './Smr.module.scss'
-import {RecalculatedRows, RequestCreateRow, RowWithChild, TreeResponse} from "../../services/types";
-import {useAppDispatch} from "../../services/store";
-
-const smrScheme = z.object({
-    rowName: z.string().min(1),
-    salary: z.string(),
-    equipmentCosts: z.string(),
-    overheads: z.string(),
-    estimatedProfit: z.string(),
-});
-
-export type SmrFormValues = z.infer<typeof smrScheme>;
+import {infoNotification} from "../../lib/notifications";
 
 export const Smr = () => {
-    const {data, isSuccess} = useGetTreeRowsQuery()
-    const [createRow] = useCreateRowMutation()
-    const [deleteRow] = useDeleteRowMutation()
-
-    const [showAddNewRow, setShowAddNewRow] = useState(false)
-    const [parentId, setParentId] = useState<number | null>(null)
-
-    const dispatch = useAppDispatch()
+    const {
+        isSuccess,
+        data,
+        showAddNewRow,
+        control,
+        addRow,
+        removeRow,
+        onSubmitSmr,
+        setShowAddNewRow
+    } = useSmr()
 
     console.log(data)
 
     useEffect(() => {
-        console.log('useEffect')
-        console.log(isSuccess && data.length)
-        if (isSuccess && !data.length) {
-            console.log(123)
+        if (isSuccess && !data!.length) {
             setShowAddNewRow(true)
+            infoNotification('Введите первую строку')
         }
     }, [isSuccess]);
-
-
-    const {control, handleSubmit} = useForm<SmrFormValues>({
-        defaultValues: {
-            rowName: '',
-            salary: '0',
-            equipmentCosts: '0',
-            overheads: '0',
-            estimatedProfit: '0',
-        },
-        resolver: zodResolver(smrScheme),
-    });
-
-    const handleAddRow = async (newRow: RequestCreateRow) => {
-        setShowAddNewRow(false)
-
-        try {
-            const response: RecalculatedRows = await createRow(newRow).unwrap();
-
-            const newData = baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
-                if (parentId === null) {
-                    return [{...response.current, child: []}]
-                }
-
-                const addElementToDraft = (draft: any, id: number | null) => {
-                    for (let i = 0; i < draft.length; i++) {
-                        if (draft[i].id === id) {
-                            draft[i].child.push({...response.current, child: []});
-                            return;
-                        }
-                        if (draft[i].child && draft[i].child.length > 0) {
-                            addElementToDraft(draft[i].child, id);
-                        }
-                    }
-                };
-                addElementToDraft(draft, parentId);
-            });
-
-
-            dispatch(newData)
-
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-
-    const onSubmitSmr = handleSubmit(async (data) => {
-        const body = {
-            equipmentCosts: +data.equipmentCosts,
-            estimatedProfit: +data.equipmentCosts,
-            machineOperatorSalary: 0,
-            mainCosts: 0,
-            materials: 0,
-            mimExploitation: 0,
-            overheads: +data.overheads,
-            parentId: parentId,
-            rowName: data.rowName,
-            salary: +data.salary,
-            supportCosts: 0,
-        }
-        await handleAddRow(body);
-    });
-
-
-    const addRow = (parentId: number) => {
-        setShowAddNewRow(true)
-        setParentId(parentId)
-    }
-
 
     return (<form className={s.smr} onSubmit={onSubmitSmr}>
             <table className={s.table}>
@@ -128,13 +44,12 @@ export const Smr = () => {
                 </thead>
                 <tbody>
                 {data?.map((row) => (
-                    <RecursiveRow key={row.id} addRow={addRow} row={row} level={0}/>
+                    <RecursiveRow key={row.id} addRow={addRow} removeRow={removeRow} row={row} level={0}/>
                 ))}
 
                 {showAddNewRow && <tr>
                     <td className={s.td}>
-                        <div className={s.add} style={{marginLeft: `${2 * 20}px`}}>
-                            {/*<div className={s.buttons} style={{marginLeft: `${level * 20}px`}}>*/}
+                        <div className={s.add}>
                             <Add/>
                         </div>
                     </td>
