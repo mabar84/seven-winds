@@ -1,0 +1,16 @@
+.link {
+  padding: 5px 5px 5px 20px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  gap: 14px;
+  color: var(--color-bright-text);
+  &_active {
+    background-color: var(--color-active-background);
+  }
+}
+.text {
+  color: var(--color-bright-text);
+}
+
+

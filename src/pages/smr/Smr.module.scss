@@ -1,0 +1,48 @@
+.smr {
+  width: 100%;
+  padding: 0 10px;
+  background-color: var(--color-table-background);
+  border-left: 1px solid var(--color-borders);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    border-bottom: 1px solid var(--color-borders);
+  }
+
+  th {
+    padding: 12px;
+    text-align: left;
+    line-height: var(--line-height-l);
+    letter-spacing: 0.1px;
+    font-weight: var(--font-weight-regular);
+  }
+
+  .level {
+    width: max-content;
+  }
+
+  .name {
+    width: 100%;
+  }
+
+  .static {
+    min-width: 200px;
+  }
+}
+
+.td {
+  padding: 12px;
+  color: var(--color-bright-text);
+  vertical-align: middle;
+}
+
+.add {
+  padding: 2px;
+  width: 55px;
+  display: flex;
+  align-items: center;
+}
