@@ -54,50 +54,31 @@ export const Smr = () => {
         resolver: zodResolver(smrScheme),
     });
 
-    function findItemById(items: TreeResponse, id: number | null): RowWithChild | null {
-        for (const item of items) {
-            if (item.id === id) {
-                return item;
-            }
-            if (item.child && item.child.length > 0) {
-                const found = findItemById(item.child, id);
-                if (found) {
-                    return found;
-                }
-            }
-        }
-        return null;
-    }
-
-    interface Node {
-        equipmentCosts: number;
-        estimatedProfit: number;
-        id: number;
-        machineOperatorSalary: number;
-        mainCosts: number;
-        materials: number;
-        mimExploitation: number;
-        overheads: number;
-        rowName: string;
-        salary: number;
-        supportCosts: number;
-        total: number;
-        child: Node[];
-    }
-
     const handleAddRow = async (newRow: RequestCreateRow) => {
+        setShowAddNewRow(false)
+
         try {
             const response: RecalculatedRows = await createRow(newRow).unwrap();
 
             const newData = baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
-                setShowAddNewRow(false)
-
-                return draft
-            })
+                const addElementToDraft = (draft: any, id: number | null) => {
+                    for (let i = 0; i < draft.length; i++) {
+                        if (draft[i].id === id) {
+                            draft[i].child.push({...response.current, child: []});
+                            return;
+                        }
+                        if (draft[i].child && draft[i].child.length > 0) {
+                            addElementToDraft(draft[i].child, id);
+                        }
+                    }
+                };
+                addElementToDraft(draft, parentId);
+            });
 
             dispatch(newData)
+
         } catch (error) {
-            console.error('Failed to add row: ', error);
+            console.error(error);
         }
     };
 
@@ -116,8 +97,8 @@ export const Smr = () => {
             salary: +data.salary,
             supportCosts: 0,
         }
-        console.log('Попытка создания строки у', data.rowName, parentId)
         await handleAddRow(body);
+
     });
 
 
@@ -127,30 +108,6 @@ export const Smr = () => {
         setParentId(parentId)
     }
 
-    // const deleteRowHandler = async (id:number) => {
-    //     try {
-    //         const response: RecalculatedRows = await deleteRow(id).unwrap();
-    //
-    //         const newData = baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
-    //             const deleteElementFromDraft = (draft: any, id: number) => {
-    //                 for (let i = 0; i < draft.length; i++) {
-    //                     if (draft[i].id === id) {
-    //                         draft.splice(i, 1);
-    //                         return;
-    //                     }
-    //                     if (draft[i].child && draft[i].child.length > 0) {
-    //                         deleteElementFromDraft(draft[i].child, id);
-    //                     }
-    //                 }
-    //             };
-    //             deleteElementFromDraft(draft, id);
-    //         });
-    //
-    //         dispatch(newData)
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // }
 
     return (<form className={s.smr} onSubmit={onSubmitSmr}>
             <table className={s.table}>

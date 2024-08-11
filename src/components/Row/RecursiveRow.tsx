@@ -17,6 +17,7 @@ export const RecursiveRow = (props: RowProps) => {
     const {row, level, addRow} = props
 
     const [deleteRow] = useDeleteRowMutation()
+
     const dispatch = useAppDispatch()
 
     const addClickHandler = () => {
@@ -43,6 +44,7 @@ export const RecursiveRow = (props: RowProps) => {
             });
 
             dispatch(newData)
+
         } catch (error) {
             console.error(error);
         }
