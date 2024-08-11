@@ -6,6 +6,7 @@ import {baseApi, useCreateRowMutation, useDeleteRowMutation} from "../../service
 import s from './RecursiveRow.module.scss'
 import {errorNotification} from "../../lib/notifications";
 import {useAppDispatch} from "../../services/store";
+import clsx from "clsx";
 
 type RowProps = {
     row: RowWithChild;
@@ -54,7 +55,7 @@ export const RecursiveRow = (props: RowProps) => {
         <>
             <tr className={s.tr}>
                 <td className={s.td}>
-                    <div className={s.buttons} style={{marginLeft: `${level * 20}px`}}>
+                    <div className={clsx(s.buttons, level && s.buttons_line )} style={{marginLeft: `${level * 20}px`}}>
                         <button type='button' className={s.add} onClick={addClickHandler}>
                             <Add/>
                         </button>

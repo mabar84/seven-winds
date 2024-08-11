@@ -1,4 +1,5 @@
 .header {
+  background-color: var(--color-layout-background);
 
   &_top {
     padding: 0 20px;
@@ -73,6 +74,7 @@
   width: 234px;
   flex-shrink: 0;
   height: calc(100vh - 94px);
+  background-color: var(--color-layout-background);
 
   &_list {
     margin: 0;

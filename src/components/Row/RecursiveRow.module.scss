@@ -1,8 +1,9 @@
 .tr {
   padding: 16px 0;
+
   & + .tr {
 
-  border-top: 1px solid var(--color-borders);
+    border-top: 1px solid var(--color-borders);
   }
 }
 
@@ -26,6 +27,31 @@
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.9s;
+  position: relative;
+
+  &.buttons_line:before {
+    content: "";
+    display: block;
+    width: 16px;
+    height: 1px;
+    background-color: var(--color-lines);
+    position: absolute;
+    left: -8px;
+    bottom: 14px;
+    z-index: -1;
+  }
+
+  &.buttons_line:after {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 60px;
+    background-color: var(--color-lines);
+    position: absolute;
+    left: -8px;
+    right: 0;
+    bottom: 14px;
+  }
 
   &:hover {
     background-color: var(--color-borders);
