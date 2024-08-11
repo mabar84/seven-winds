@@ -24,7 +24,7 @@ const smrScheme = z.object({
 export type SmrFormValues = z.infer<typeof smrScheme>;
 
 export const Smr = () => {
-    const {data} = useGetTreeRowsQuery()
+    const {data, isSuccess} = useGetTreeRowsQuery()
     const [createRow] = useCreateRowMutation()
     const [deleteRow] = useDeleteRowMutation()
 
@@ -36,11 +36,13 @@ export const Smr = () => {
     console.log(data)
 
     useEffect(() => {
-
-        if (data && !data.length) {
+        console.log('useEffect')
+        console.log(isSuccess && data.length)
+        if (isSuccess && !data.length) {
+            console.log(123)
             setShowAddNewRow(true)
         }
-    }, []);
+    }, [isSuccess]);
 
 
     const {control, handleSubmit} = useForm<SmrFormValues>({
@@ -61,6 +63,10 @@ export const Smr = () => {
             const response: RecalculatedRows = await createRow(newRow).unwrap();
 
             const newData = baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
+                if (parentId === null) {
+                    return [{...response.current, child: []}]
+                }
+
                 const addElementToDraft = (draft: any, id: number | null) => {
                     for (let i = 0; i < draft.length; i++) {
                         if (draft[i].id === id) {
@@ -74,6 +80,7 @@ export const Smr = () => {
                 };
                 addElementToDraft(draft, parentId);
             });
+
 
             dispatch(newData)
 
@@ -98,12 +105,10 @@ export const Smr = () => {
             supportCosts: 0,
         }
         await handleAddRow(body);
-
     });
 
 
     const addRow = (parentId: number) => {
-        console.log('Попытка добавить что-то', parentId)
         setShowAddNewRow(true)
         setParentId(parentId)
     }
