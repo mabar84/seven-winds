@@ -95,7 +95,7 @@ export const useSmr = () => {
 
     const removeRow = async (rowId: number) => {
         try {
-            const response: RecalculatedRows = await deleteRow(rowId).unwrap();
+            await deleteRow(rowId).unwrap();
 
             const newData = baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
                 const deleteElementFromDraft = (draft: any, id: number) => {
@@ -114,6 +114,7 @@ export const useSmr = () => {
                 if (!draft.length) {
                     infoNotification('Введите первую строку')
                     setShowAddNewRow(true)
+                    setParentId(null)
                 }
             });
 

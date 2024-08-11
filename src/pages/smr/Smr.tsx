@@ -21,8 +21,6 @@ export const Smr = () => {
         setShowAddNewRow
     } = useSmr()
 
-    console.log(data)
-
     useEffect(() => {
         if (isSuccess && !data!.length) {
             setShowAddNewRow(true)
