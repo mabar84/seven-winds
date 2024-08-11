@@ -28,7 +28,7 @@ export const useSmr = () => {
         estimatedProfit: z.string(),
     });
 
-    const {control, handleSubmit} = useForm<SmrFormValues>({
+    const {control, handleSubmit, reset} = useForm<SmrFormValues>({
         defaultValues: {
             rowName: '',
             salary: '0',
@@ -54,6 +54,7 @@ export const useSmr = () => {
             supportCosts: 0,
         }
         await handleAddRow(body);
+        reset();
     });
 
     const handleAddRow = async (newRow: RequestCreateRow) => {

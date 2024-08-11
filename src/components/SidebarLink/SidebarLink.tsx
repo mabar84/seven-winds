@@ -1,6 +1,8 @@
-import s from './SidebarLink.module.scss'
-import {Link, NavLink} from "react-router-dom";
+import {NavLink} from "react-router-dom";
+
 import {LinkIcon} from "../../assets/icons/LinkIcon";
+
+import s from './SidebarLink.module.scss'
 
 type SidebarLinkProps = {
     to: string

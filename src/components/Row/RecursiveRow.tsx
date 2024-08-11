@@ -23,9 +23,14 @@ export const RecursiveRow = (props: RowProps) => {
         removeRow(row.id)
     }
 
+    const onDoubleClickHandler=()=>{
+        console.log('onDoubleClickHandler')
+    }
+
+
     return (
         <>
-            <tr className={s.tr}>
+            <tr className={s.tr}   onDoubleClick={onDoubleClickHandler}>
                 <td className={s.td}>
                     <div className={clsx(s.buttons, level && s.buttons_line)} style={{marginLeft: `${level * 20}px`}}>
                         <button type='button' className={s.add} onClick={addClickHandler}>
