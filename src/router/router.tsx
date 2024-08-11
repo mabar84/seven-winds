@@ -1,9 +1,9 @@
 import {createBrowserRouter, Navigate, RouteObject} from 'react-router-dom';
 
-import {Smr} from "../pages/smr/Smr.tsx";
-import {Routes} from "../constants/routes.ts";
 import {Page404} from "../pages/page404";
 import {Layout} from "../layout";
+import {Smr} from "../pages/smr";
+import {Routes} from "../constants/routes";
 
 const privateRoutes: RouteObject[] = [
     {},
