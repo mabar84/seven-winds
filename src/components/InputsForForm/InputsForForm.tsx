@@ -15,7 +15,7 @@ type InputsForFormProps = {
 
 export const InputsForForm = ({control, level, withBorder}: InputsForFormProps) => {
     return (
-        <tr className={withBorder && s.tr}>
+        <tr className={clsx(withBorder && s.tr)}>
             <td className={s.td}>
                 <div className={clsx(s.add, level && s.add_line)} style={{marginLeft: `${level * 20}px`}}>
                     <Add/>
