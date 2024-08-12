@@ -1,8 +1,8 @@
-import {content} from "../../constants/content";
 import {RecursiveRow} from "../../components/Row";
 import {Add} from "../../assets/icons/Add";
 import {InputWithController} from "../../components/InpurWithController/InpurWithController";
 import {useSmr} from "./useSmr";
+import {THead} from "../../components/THead";
 
 import s from './Smr.module.scss'
 
@@ -19,18 +19,11 @@ export const Smr = () => {
         setUpdatingRow,
     } = useSmr()
 
-    return (<form className={s.smr} onSubmit={onSubmitSmr}>
+    return (
+        <form className={s.smr} onSubmit={onSubmitSmr}>
             <table className={s.table}>
-                <thead>
-                <tr>
-                    <th className={s.level}>{content.th.level}</th>
-                    <th className={s.name}>{content.th.rowName}</th>
-                    <th className={s.static}>{content.th.salary}</th>
-                    <th className={s.static}>{content.th.equipmentCosts}</th>
-                    <th className={s.static}>{content.th.overheads}</th>
-                    <th className={s.static}>{content.th.estimatedProfit}</th>
-                </tr>
-                </thead>
+                <THead/>
+
                 <tbody>
                 {data?.map((row) => (
                     <RecursiveRow key={row.id} addRow={addRow} removeRow={removeRow} setUpdatingRow={setUpdatingRow}
@@ -59,6 +52,7 @@ export const Smr = () => {
                 </tr>}
                 </tbody>
             </table>
+
             <input type={'submit'} style={{display: "none"}}/>
         </form>
     )

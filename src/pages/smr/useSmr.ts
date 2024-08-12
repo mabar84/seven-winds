@@ -14,6 +14,16 @@ import {
 import {useAppDispatch} from "../../services/store";
 import {infoNotification} from "../../lib/notifications";
 
+export type SmrFormValues = z.infer<typeof smrScheme>;
+
+const smrScheme = z.object({
+    rowName: z.string().min(1),
+    salary: z.string(),
+    equipmentCosts: z.string(),
+    overheads: z.string(),
+    estimatedProfit: z.string(),
+});
+
 export const useSmr = () => {
     const {data, isSuccess} = useGetTreeRowsQuery()
     const [createRow] = useCreateRowMutation()
@@ -26,30 +36,11 @@ export const useSmr = () => {
 
     const dispatch = useAppDispatch()
 
-    type SmrFormValues = z.infer<typeof smrScheme>;
-
-    const smrScheme = z.object({
-        rowName: z.string().min(1),
-        salary: z.string(),
-        equipmentCosts: z.string(),
-        overheads: z.string(),
-        estimatedProfit: z.string(),
-    });
-
     const {control, handleSubmit, reset} = useForm<SmrFormValues>({
-        defaultValues: {
-            rowName: '',
-            salary: '0',
-            equipmentCosts: '0',
-            overheads: '0',
-            estimatedProfit: '0',
-        },
         resolver: zodResolver(smrScheme),
     });
 
-
     const onSubmitSmr = handleSubmit(async (data) => {
-
         const body = {
             equipmentCosts: +data.equipmentCosts,
             estimatedProfit: +data.equipmentCosts,
@@ -107,7 +98,6 @@ export const useSmr = () => {
         }
     };
 
-
     const handleUpdateRow = async (args: RequestUpdateRow & { rID: number }) => {
         try {
             const response: RecalculatedRows = await updateRow(args).unwrap();
@@ -134,7 +124,6 @@ export const useSmr = () => {
             console.error(error);
         }
     };
-
 
     const addRow = (parentId: number) => {
         if (!updatingRow) {

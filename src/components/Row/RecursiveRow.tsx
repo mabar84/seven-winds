@@ -1,11 +1,13 @@
 import clsx from "clsx";
+import {Control} from "react-hook-form";
 
-import {RowResponse, RowWithChild} from "../../services/types";
 import {Add} from "../../assets/icons/Add";
 import {Delete} from "../../assets/icons/Delete";
+import {InputWithController} from "../InpurWithController/InpurWithController";
+import {SmrFormValues} from "../../pages/smr/useSmr";
+import {RowResponse, RowWithChild} from "../../services/types";
 
 import s from './RecursiveRow.module.scss'
-import {InputWithController} from "../InpurWithController/InpurWithController";
 
 type RowProps = {
     row: RowWithChild;
@@ -14,7 +16,7 @@ type RowProps = {
     removeRow: (rowId: number) => void;
     updatingRowId: number | null;
     setUpdatingRow: (row: RowResponse | undefined) => void;
-    control: any;
+    control: Control<SmrFormValues>;
     setShowAddNewRow: (bool: boolean) => void;
 }
 
