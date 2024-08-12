@@ -1,5 +1,3 @@
-import {useEffect} from "react";
-
 import {content} from "../../constants/content";
 import {RecursiveRow} from "../../components/Row";
 import {Add} from "../../assets/icons/Add";
@@ -7,11 +5,9 @@ import {InputWithController} from "../../components/InpurWithController/InpurWit
 import {useSmr} from "./useSmr";
 
 import s from './Smr.module.scss'
-import {infoNotification} from "../../lib/notifications";
 
 export const Smr = () => {
     const {
-        isSuccess,
         data,
         showAddNewRow,
         control,
@@ -21,14 +17,7 @@ export const Smr = () => {
         setShowAddNewRow,
         updatingRowId,
         setUpdatingRow,
-          } = useSmr()
-
-    useEffect(() => {
-        if (isSuccess && !data!.length) {
-            setShowAddNewRow(true)
-            infoNotification('Введите первую строку')
-        }
-    }, [isSuccess]);
+    } = useSmr()
 
     return (<form className={s.smr} onSubmit={onSubmitSmr}>
             <table className={s.table}>
@@ -45,7 +34,8 @@ export const Smr = () => {
                 <tbody>
                 {data?.map((row) => (
                     <RecursiveRow key={row.id} addRow={addRow} removeRow={removeRow} setUpdatingRow={setUpdatingRow}
-                                  updatingRowId={updatingRowId}           control={control}       row={row} level={0}/>
+                                  setShowAddNewRow={setShowAddNewRow} updatingRowId={updatingRowId} control={control}
+                                  row={row} level={0}/>
                 ))}
 
                 {showAddNewRow && <tr>
@@ -73,5 +63,3 @@ export const Smr = () => {
         </form>
     )
 };
-
-

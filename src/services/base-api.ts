@@ -32,9 +32,7 @@ export const baseApi = createApi({
             }),
             updateRow: builder.mutation({
                 query: (args) => {
-                    console.log(args)
                     const {rID,...body} = args;
-                    console.log('body=',body)
                     return {
                         body,
                         method: 'POST',

@@ -15,10 +15,11 @@ type RowProps = {
     updatingRowId: number | null;
     setUpdatingRow: (row: RowResponse | undefined) => void;
     control: any;
+    setShowAddNewRow: (bool: boolean) => void;
 }
 
 export const RecursiveRow = (props: RowProps) => {
-    const {row, level, addRow, removeRow,  control, updatingRowId,setUpdatingRow} = props
+    const {row, level, addRow, removeRow, control, updatingRowId, setUpdatingRow, setShowAddNewRow} = props
 
     const isEditMode = updatingRowId === row.id
 
@@ -31,6 +32,7 @@ export const RecursiveRow = (props: RowProps) => {
 
     const onDoubleClickHandler = () => {
         setUpdatingRow(row)
+        setShowAddNewRow(false)
     }
 
     return (
@@ -75,11 +77,11 @@ export const RecursiveRow = (props: RowProps) => {
                 </tr>
             }
 
-
             {
                 row?.child?.length > 0 && row.child.map((child) => (
                     <RecursiveRow key={child.id} addRow={addRow} removeRow={removeRow} setUpdatingRow={setUpdatingRow}
-                                  control={control} row={child} updatingRowId={updatingRowId}
+                                  setShowAddNewRow={setShowAddNewRow} control={control} row={child}
+                                  updatingRowId={updatingRowId}
                                   level={level + 1}/>))
             }
         </>

@@ -39,7 +39,7 @@ export const useSmr = () => {
     const {control, handleSubmit, reset} = useForm<SmrFormValues>({
         defaultValues: {
             rowName: '',
-            salary: '',
+            salary: '0',
             equipmentCosts: '0',
             overheads: '0',
             estimatedProfit: '0',
@@ -47,19 +47,6 @@ export const useSmr = () => {
         resolver: zodResolver(smrScheme),
     });
 
-    useEffect(() => {
-        if (updatingRow) {
-            console.log('переписываем')
-            reset({
-                rowName: updatingRow.rowName,
-                salary: updatingRow.salary.toString(),
-                equipmentCosts: updatingRow.equipmentCosts.toString(),
-                overheads: updatingRow.overheads.toString(),
-                estimatedProfit: updatingRow.estimatedProfit.toString(),
-            });
-        } else {
-        }
-    }, [updatingRow, reset]);
 
     const onSubmitSmr = handleSubmit(async (data) => {
 
@@ -80,11 +67,12 @@ export const useSmr = () => {
         if (updatingRow) {
             const {parentId, ...newBody} = body
             await handleUpdateRow({...newBody, rID: updatingRow.id})
+            setUpdatingRow(undefined)
+
         } else {
             await handleAddRow(body);
         }
-        reset();
-        setUpdatingRow(undefined)
+        reset()
     });
 
     const handleAddRow = async (newRow: RequestCreateRow) => {
@@ -129,9 +117,7 @@ export const useSmr = () => {
                 const updateElementInDraft = (draft: any, id: number | null) => {
                     for (let i = 0; i < draft.length; i++) {
                         if (draft[i].id === id) {
-                            console.log(draft[i])
                             draft[i] = {...draft[i], ...response.current};
-                            console.log(draft[i])
                             return;
                         }
                         if (draft[i].child && draft[i].child.length > 0) {
@@ -142,7 +128,6 @@ export const useSmr = () => {
                 updateElementInDraft(draft, updatingRow?.id || null);
             });
 
-
             dispatch(newData)
 
         } catch (error) {
@@ -152,9 +137,10 @@ export const useSmr = () => {
 
 
     const addRow = (parentId: number) => {
-        reset()
-        setShowAddNewRow(true)
-        setParentId(parentId)
+        if (!updatingRow) {
+            setShowAddNewRow(true)
+            setParentId(parentId)
+        }
     }
 
     const removeRow = async (rowId: number) => {
@@ -189,8 +175,34 @@ export const useSmr = () => {
         }
     }
 
+    useEffect(() => {
+        if (isSuccess && !data!.length) {
+            setShowAddNewRow(true)
+            infoNotification('Введите первую строку')
+        }
+    }, [isSuccess]);
+
+    useEffect(() => {
+        if (updatingRow) {
+            reset({
+                rowName: updatingRow.rowName,
+                salary: updatingRow.salary.toString(),
+                equipmentCosts: updatingRow.equipmentCosts.toString(),
+                overheads: updatingRow.overheads.toString(),
+                estimatedProfit: updatingRow.estimatedProfit.toString(),
+            });
+        } else {
+            reset({
+                rowName: '',
+                salary: '0',
+                equipmentCosts: '0',
+                overheads: '0',
+                estimatedProfit: '0',
+            });
+        }
+    }, [updatingRow]);
+
     return {
-        isSuccess,
         data,
         showAddNewRow,
         control,
@@ -199,6 +211,8 @@ export const useSmr = () => {
         onSubmitSmr,
         setShowAddNewRow,
         updatingRowId: updatingRow?.id || null,
-        setUpdatingRow
+        setUpdatingRow,
+        updatingRow,
+        reset
     }
 }
