@@ -109,7 +109,6 @@ export const useSmr = () => {
             });
 
 
-
             dispatch(newData)
 
         } catch (error) {
@@ -155,7 +154,7 @@ export const useSmr = () => {
 
     const removeRow = async (rowId: number) => {
         try {
-            await deleteRow(rowId).unwrap();
+            const response: RecalculatedRows = await deleteRow(rowId).unwrap();
 
             const newData = baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
                 const deleteElementFromDraft = (draft: any, id: number) => {
@@ -176,6 +175,24 @@ export const useSmr = () => {
                     setShowAddNewRow(true)
                     setParentId(null)
                 }
+
+                const updateElementInDraft = (draft: any, row: RowResponse) => {
+                    for (let i = 0; i < draft.length; i++) {
+                        if (draft[i].id === row.id) {
+                            draft[i] = {...draft[i], ...row};
+                            return;
+                        }
+                        if (draft[i].child && draft[i].child.length > 0) {
+                            updateElementInDraft(draft[i].child, row);
+                        }
+                    }
+                };
+
+                response.changed.forEach((el) => {
+                    updateElementInDraft(draft, el);
+                })
+
+
             });
 
             dispatch(newData)
