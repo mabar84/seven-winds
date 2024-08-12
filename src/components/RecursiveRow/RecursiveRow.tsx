@@ -3,9 +3,9 @@ import {Control} from "react-hook-form";
 
 import {Add} from "../../assets/icons/Add";
 import {Delete} from "../../assets/icons/Delete";
+import {InputsForForm} from "../InputsForForm";
 import {SmrFormValues} from "../../pages/smr/useSmr";
 import {RowResponse, RowWithChild} from "../../services/types";
-import {InputsForForm} from "../InputsForForm";
 
 import s from './RecursiveRow.module.scss'
 
@@ -28,6 +28,7 @@ export const RecursiveRow = (props: RowProps) => {
     const addClickHandler = () => {
         addRow(row.id)
     }
+
     const removeClickHandler = () => {
         removeRow(row.id)
     }

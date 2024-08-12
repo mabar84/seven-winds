@@ -1,6 +1,6 @@
-import {RecursiveRow} from "../../components/RecursiveRow";
-import {useSmr} from "./useSmr";
 import {THead} from "../../components/THead";
+import {useSmr} from "./useSmr";
+import {RecursiveRow} from "../../components/RecursiveRow";
 import {InputsForForm} from "../../components/InputsForForm";
 
 import s from './Smr.module.scss'

@@ -89,7 +89,26 @@ export const useSmr = () => {
                     }
                 };
                 addElementToDraft(draft, parentId);
+
+                const updateElementInDraft = (draft: any, row: RowResponse) => {
+                    for (let i = 0; i < draft.length; i++) {
+                        if (draft[i].id === row.id) {
+                            draft[i] = {...draft[i], ...row};
+                            return;
+                        }
+                        if (draft[i].child && draft[i].child.length > 0) {
+                            updateElementInDraft(draft[i].child, row);
+                        }
+                    }
+                };
+
+                response.changed.forEach((el) => {
+                    updateElementInDraft(draft, el);
+                })
+
             });
+
+
 
             dispatch(newData)
 
