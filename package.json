@@ -1,13 +1,10 @@
 {
-  "homepage": "https://mabar84.github.io/seven-winds/",
-  "name": "seven-winds",
+  "name": "web-template",
   "version": "1.0.0",
   "author": "rikzun",
   "scripts": {
     "start": "webpack serve --progress",
-    "build": "webpack build --progress",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "build": "webpack build --progress"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
