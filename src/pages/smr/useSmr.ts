@@ -114,8 +114,8 @@ export const useSmr = () => {
                         }
                     }
                 };
-                const combinedArray =  [...response.changed, response.current]
-                combinedArray.forEach((el)=>{
+                const combinedArray = [...response.changed, response.current]
+                combinedArray.forEach((el) => {
                     updateElementInDraft(draft, el);
                 })
             });
@@ -174,23 +174,13 @@ export const useSmr = () => {
     }, [isSuccess]);
 
     useEffect(() => {
-        if (updatingRow) {
-            reset({
-                rowName: updatingRow.rowName,
-                salary: updatingRow.salary.toString(),
-                equipmentCosts: updatingRow.equipmentCosts.toString(),
-                overheads: updatingRow.overheads.toString(),
-                estimatedProfit: updatingRow.estimatedProfit.toString(),
-            });
-        } else {
-            reset({
-                rowName: '',
-                salary: '0',
-                equipmentCosts: '0',
-                overheads: '0',
-                estimatedProfit: '0',
-            });
-        }
+        reset({
+            rowName: updatingRow?.rowName || '',
+            salary: updatingRow?.salary.toString() || '0',
+            equipmentCosts: updatingRow?.equipmentCosts.toString() || '0',
+            overheads: updatingRow?.overheads.toString() || '0',
+            estimatedProfit: updatingRow?.estimatedProfit.toString() || '0',
+        })
     }, [updatingRow]);
 
     return {
