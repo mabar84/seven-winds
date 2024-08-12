@@ -33,6 +33,7 @@ export const useSmr = () => {
     const [showAddNewRow, setShowAddNewRow] = useState(false)
     const [parentId, setParentId] = useState<number | null>(null)
     const [updatingRow, setUpdatingRow] = useState<RowResponse | undefined>(undefined)
+    const [levelForNewRow, setLevelForNewRow] = useState(2)
 
     const dispatch = useAppDispatch()
 
@@ -107,7 +108,6 @@ export const useSmr = () => {
                 })
 
             });
-
 
             dispatch(newData)
 
@@ -204,6 +204,7 @@ export const useSmr = () => {
 
     useEffect(() => {
         if (isSuccess && !data!.length) {
+            setLevelForNewRow(0)
             setShowAddNewRow(true)
             infoNotification('Введите первую строку')
         }
@@ -221,6 +222,7 @@ export const useSmr = () => {
 
     return {
         data,
+        levelForNewRow,
         showAddNewRow,
         updatingRowId: updatingRow?.id || null,
         control,
