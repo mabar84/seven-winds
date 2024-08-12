@@ -103,19 +103,21 @@ export const useSmr = () => {
             const response: RecalculatedRows = await updateRow(args).unwrap();
 
             const newData = baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
-
-                const updateElementInDraft = (draft: any, id: number | null) => {
+                const updateElementInDraft = (draft: any, row: RowResponse) => {
                     for (let i = 0; i < draft.length; i++) {
-                        if (draft[i].id === id) {
-                            draft[i] = {...draft[i], ...response.current};
+                        if (draft[i].id === row.id) {
+                            draft[i] = {...draft[i], ...row};
                             return;
                         }
                         if (draft[i].child && draft[i].child.length > 0) {
-                            updateElementInDraft(draft[i].child, id);
+                            updateElementInDraft(draft[i].child, row);
                         }
                     }
                 };
-                updateElementInDraft(draft, updatingRow?.id || null);
+                const combinedArray =  [...response.changed, response.current]
+                combinedArray.forEach((el)=>{
+                    updateElementInDraft(draft, el);
+                })
             });
 
             dispatch(newData)

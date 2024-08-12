@@ -54,10 +54,10 @@ export const RecursiveRow = (props: RowProps) => {
                         </div>
                     </td>
                     <td className={s.td}>{row.rowName}</td>
-                    <td className={s.td}>{row.salary}</td>
-                    <td className={s.td}>{row.equipmentCosts}</td>
-                    <td className={s.td}>{row.overheads}</td>
-                    <td className={s.td}>{row.estimatedProfit}</td>
+                    <td className={s.td}>{row.salary.toLocaleString('ru-RU')}</td>
+                    <td className={s.td}>{row.equipmentCosts.toLocaleString('ru-RU')}</td>
+                    <td className={s.td}>{row.overheads.toLocaleString('ru-RU')}</td>
+                    <td className={s.td}>{row.estimatedProfit.toLocaleString('ru-RU')}</td>
                 </tr>
             }
 

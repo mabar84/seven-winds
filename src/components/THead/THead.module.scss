@@ -19,5 +19,6 @@
 }
 
 .static {
-  min-width: 200px;
+  width: max-content;
+  white-space: nowrap;
 }
