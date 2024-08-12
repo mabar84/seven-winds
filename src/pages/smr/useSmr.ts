@@ -3,7 +3,7 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
 
-import {RecalculatedRows, RequestCreateRow, RequestUpdateRow, RowResponse} from "../../services/types";
+import {RecalculatedRows, RequestCreateRow, RequestUpdateRow, RowResponse, TreeResponse} from "../../services/types";
 import {
     baseApi,
     useCreateRowMutation,
@@ -67,6 +67,18 @@ export const useSmr = () => {
         reset()
     });
 
+    const updateElementInDraft = (draft: TreeResponse, row: RowResponse) => {
+        for (let i = 0; i < draft.length; i++) {
+            if (draft[i].id === row.id) {
+                draft[i] = {...draft[i], ...row};
+                return;
+            }
+            if (draft[i].child && draft[i].child.length > 0) {
+                updateElementInDraft(draft[i].child, row);
+            }
+        }
+    };
+
     const handleAddRow = async (newRow: RequestCreateRow) => {
         setShowAddNewRow(false)
 
@@ -78,7 +90,7 @@ export const useSmr = () => {
                     return [{...response.current, child: []}]
                 }
 
-                const addElementToDraft = (draft: any, id: number | null) => {
+                const addElementToDraft = (draft: TreeResponse, id: number | null) => {
                     for (let i = 0; i < draft.length; i++) {
                         if (draft[i].id === id) {
                             draft[i].child.push({...response.current, child: []});
@@ -90,18 +102,6 @@ export const useSmr = () => {
                     }
                 };
                 addElementToDraft(draft, parentId);
-
-                const updateElementInDraft = (draft: any, row: RowResponse) => {
-                    for (let i = 0; i < draft.length; i++) {
-                        if (draft[i].id === row.id) {
-                            draft[i] = {...draft[i], ...row};
-                            return;
-                        }
-                        if (draft[i].child && draft[i].child.length > 0) {
-                            updateElementInDraft(draft[i].child, row);
-                        }
-                    }
-                };
 
                 response.changed.forEach((el) => {
                     updateElementInDraft(draft, el);
@@ -121,17 +121,7 @@ export const useSmr = () => {
             const response: RecalculatedRows = await updateRow(args).unwrap();
 
             const newData = baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
-                const updateElementInDraft = (draft: any, row: RowResponse) => {
-                    for (let i = 0; i < draft.length; i++) {
-                        if (draft[i].id === row.id) {
-                            draft[i] = {...draft[i], ...row};
-                            return;
-                        }
-                        if (draft[i].child && draft[i].child.length > 0) {
-                            updateElementInDraft(draft[i].child, row);
-                        }
-                    }
-                };
+
                 const combinedArray = [...response.changed, response.current]
                 combinedArray.forEach((el) => {
                     updateElementInDraft(draft, el);
@@ -157,7 +147,7 @@ export const useSmr = () => {
             const response: RecalculatedRows = await deleteRow(rowId).unwrap();
 
             const newData = baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
-                const deleteElementFromDraft = (draft: any, id: number) => {
+                const deleteElementFromDraft = (draft: TreeResponse, id: number) => {
                     for (let i = 0; i < draft.length; i++) {
                         if (draft[i].id === id) {
                             draft.splice(i, 1);
@@ -175,18 +165,6 @@ export const useSmr = () => {
                     setShowAddNewRow(true)
                     setParentId(null)
                 }
-
-                const updateElementInDraft = (draft: any, row: RowResponse) => {
-                    for (let i = 0; i < draft.length; i++) {
-                        if (draft[i].id === row.id) {
-                            draft[i] = {...draft[i], ...row};
-                            return;
-                        }
-                        if (draft[i].child && draft[i].child.length > 0) {
-                            updateElementInDraft(draft[i].child, row);
-                        }
-                    }
-                };
 
                 response.changed.forEach((el) => {
                     updateElementInDraft(draft, el);
