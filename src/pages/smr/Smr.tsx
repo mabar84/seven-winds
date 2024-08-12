@@ -1,4 +1,4 @@
-import {RecursiveRow} from "../../components/Row";
+import {RecursiveRow} from "../../components/RecursiveRow";
 import {useSmr} from "./useSmr";
 import {THead} from "../../components/THead";
 import {InputsForForm} from "../../components/InputsForForm";

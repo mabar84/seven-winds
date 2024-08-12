@@ -4,7 +4,7 @@
 }
 
 .td {
-  padding: 16px 12px;
+  padding: 12px;
   color: var(--color-bright-text);
 }
 
@@ -13,5 +13,31 @@
   width: 55px;
   display: flex;
   align-items: center;
-  z-index: 1;
+  position: relative;
+
+  &.add_line:before {
+    content: "";
+    display: block;
+    width: 16px;
+    height: 1px;
+    background-color: var(--color-lines);
+    position: absolute;
+    left: -8px;
+    bottom: 14px;
+  }
+
+  &.add_line:after {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 61px;
+    background-color: var(--color-lines);
+    position: absolute;
+    left: -8px;
+    bottom: 14px;
+  }
+
+  svg {
+    z-index: 1;
+  }
 }

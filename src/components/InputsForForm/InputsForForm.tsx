@@ -1,4 +1,5 @@
 import {Control} from "react-hook-form";
+import clsx from "clsx";
 
 import {InputWithController} from "../InpurWithController/InpurWithController";
 import {SmrFormValues} from "../../pages/smr/useSmr";
@@ -16,7 +17,7 @@ export const InputsForForm = ({control, level, withBorder}: InputsForFormProps) 
     return (
         <tr className={withBorder && s.tr}>
             <td className={s.td}>
-                <div className={s.add} style={{marginLeft: `${level * 20}px`}}>
+                <div className={clsx(s.add, level && s.add_line)} style={{marginLeft: `${level * 20}px`}}>
                     <Add/>
                 </div>
             </td>
