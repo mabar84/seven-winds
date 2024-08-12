@@ -81,10 +81,12 @@ export const RecursiveRow = (props: RowProps) => {
 
             {
                 row?.child?.length > 0 && row.child.map((child) => (
-                    <RecursiveRow key={child.id} addRow={addRow} removeRow={removeRow} setUpdatingRow={setUpdatingRow}
-                                  setShowAddNewRow={setShowAddNewRow} control={control} row={child}
-                                  updatingRowId={updatingRowId}
-                                  level={level + 1}/>))
+                    <RecursiveRow
+                        key={child.id} addRow={addRow} removeRow={removeRow}
+                        setUpdatingRow={setUpdatingRow} setShowAddNewRow={setShowAddNewRow}
+                        control={control} row={child} updatingRowId={updatingRowId}
+                        level={level + 1}
+                    />))
             }
         </>
     );

@@ -5,17 +5,18 @@ import {useSmr} from "./useSmr";
 import {THead} from "../../components/THead";
 
 import s from './Smr.module.scss'
+import clsx from "clsx";
 
 export const Smr = () => {
     const {
         data,
         showAddNewRow,
+        updatingRowId,
         control,
+        onSubmitSmr,
         addRow,
         removeRow,
-        onSubmitSmr,
         setShowAddNewRow,
-        updatingRowId,
         setUpdatingRow,
     } = useSmr()
 
@@ -26,14 +27,17 @@ export const Smr = () => {
 
                 <tbody>
                 {data?.map((row) => (
-                    <RecursiveRow key={row.id} addRow={addRow} removeRow={removeRow} setUpdatingRow={setUpdatingRow}
-                                  setShowAddNewRow={setShowAddNewRow} updatingRowId={updatingRowId} control={control}
-                                  row={row} level={0}/>
+                    <RecursiveRow
+                        key={row.id} addRow={addRow} removeRow={removeRow}
+                        setUpdatingRow={setUpdatingRow} setShowAddNewRow={setShowAddNewRow}
+                        control={control} row={row} updatingRowId={updatingRowId}
+                        level={0}
+                    />
                 ))}
 
                 {showAddNewRow && <tr>
                     <td className={s.td}>
-                        <div className={s.add}>
+                        <div className={clsx(s.add, s.add_wrapper)}>
                             <Add/>
                         </div>
                     </td>

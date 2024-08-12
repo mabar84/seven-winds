@@ -194,14 +194,12 @@ export const useSmr = () => {
     return {
         data,
         showAddNewRow,
+        updatingRowId: updatingRow?.id || null,
         control,
+        onSubmitSmr,
         addRow,
         removeRow,
-        onSubmitSmr,
         setShowAddNewRow,
-        updatingRowId: updatingRow?.id || null,
         setUpdatingRow,
-        updatingRow,
-        reset
     }
 }
