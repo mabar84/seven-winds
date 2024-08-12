@@ -1,6 +1,6 @@
 import clsx from "clsx";
 
-import {RowWithChild} from "../../services/types";
+import {RowResponse, RowWithChild} from "../../services/types";
 import {Add} from "../../assets/icons/Add";
 import {Delete} from "../../assets/icons/Delete";
 
@@ -12,15 +12,15 @@ type RowProps = {
     level: number;
     addRow: (parentId: number) => void;
     removeRow: (rowId: number) => void;
-    updatedRowId: number | null;
-    setUpdatedRowId: (rowId: number | null) => void;
+    updatingRowId: number | null;
+    setUpdatingRow: (row: RowResponse | undefined) => void;
     control: any;
 }
 
 export const RecursiveRow = (props: RowProps) => {
-    const {row, level, addRow, removeRow, setUpdatedRowId, control, updatedRowId} = props
+    const {row, level, addRow, removeRow,  control, updatingRowId,setUpdatingRow} = props
 
-    const isEditMode = updatedRowId === row.id
+    const isEditMode = updatingRowId === row.id
 
     const addClickHandler = () => {
         addRow(row.id)
@@ -30,13 +30,13 @@ export const RecursiveRow = (props: RowProps) => {
     }
 
     const onDoubleClickHandler = () => {
-        setUpdatedRowId(row.id)
+        setUpdatingRow(row)
     }
 
     return (
         <>
-            {isEditMode ?
-                <tr>
+            {isEditMode
+                ? <tr>
                     <td className={s.td}>
                         <div className={s.add}>
                             <Add/>
@@ -54,9 +54,9 @@ export const RecursiveRow = (props: RowProps) => {
                     <td className={s.td}>
                         <InputWithController control={control} name='estimatedProfit' type={'number'}/>
                     </td>
-                </tr> : <tr className={s.tr} onDoubleClick={onDoubleClickHandler}>
+                </tr>
+                : <tr className={s.tr} onDoubleClick={onDoubleClickHandler}>
                     <td className={s.td}>
-                        {isEditMode && <h1>123</h1>}
                         <div className={clsx(s.buttons, level && s.buttons_line)}
                              style={{marginLeft: `${level * 20}px`}}>
                             <button type='button' className={s.add} onClick={addClickHandler}>
@@ -78,8 +78,8 @@ export const RecursiveRow = (props: RowProps) => {
 
             {
                 row?.child?.length > 0 && row.child.map((child) => (
-                    <RecursiveRow key={child.id} addRow={addRow} removeRow={removeRow} setUpdatedRowId={setUpdatedRowId}
-                                  control={control} row={child} updatedRowId={updatedRowId}
+                    <RecursiveRow key={child.id} addRow={addRow} removeRow={removeRow} setUpdatingRow={setUpdatingRow}
+                                  control={control} row={child} updatingRowId={updatingRowId}
                                   level={level + 1}/>))
             }
         </>

@@ -1,9 +1,9 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
 
-import {RecalculatedRows, RequestCreateRow, RequestUpdateRow} from "../../services/types";
+import {RecalculatedRows, RequestCreateRow, RequestUpdateRow, RowResponse} from "../../services/types";
 import {
     baseApi,
     useCreateRowMutation,
@@ -22,7 +22,7 @@ export const useSmr = () => {
 
     const [showAddNewRow, setShowAddNewRow] = useState(false)
     const [parentId, setParentId] = useState<number | null>(null)
-    const [updatedRowId, setUpdatedRowId] = useState<number | null>(null)
+    const [updatingRow, setUpdatingRow] = useState<RowResponse | undefined>(undefined)
 
     const dispatch = useAppDispatch()
 
@@ -39,7 +39,7 @@ export const useSmr = () => {
     const {control, handleSubmit, reset} = useForm<SmrFormValues>({
         defaultValues: {
             rowName: '',
-            salary: '0',
+            salary: '',
             equipmentCosts: '0',
             overheads: '0',
             estimatedProfit: '0',
@@ -47,8 +47,21 @@ export const useSmr = () => {
         resolver: zodResolver(smrScheme),
     });
 
-    const onSubmitSmr = handleSubmit(async (data) => {
+    useEffect(() => {
+        if (updatingRow) {
+            console.log('переписываем')
+            reset({
+                rowName: updatingRow.rowName,
+                salary: updatingRow.salary.toString(),
+                equipmentCosts: updatingRow.equipmentCosts.toString(),
+                overheads: updatingRow.overheads.toString(),
+                estimatedProfit: updatingRow.estimatedProfit.toString(),
+            });
+        } else {
+        }
+    }, [updatingRow, reset]);
 
+    const onSubmitSmr = handleSubmit(async (data) => {
 
         const body = {
             equipmentCosts: +data.equipmentCosts,
@@ -64,14 +77,14 @@ export const useSmr = () => {
             supportCosts: 0,
         }
 
-        if (updatedRowId) {
+        if (updatingRow) {
             const {parentId, ...newBody} = body
-            await handleUpdateRow({...newBody, rID: updatedRowId})
+            await handleUpdateRow({...newBody, rID: updatingRow.id})
         } else {
             await handleAddRow(body);
         }
-        // await handleAddRow(body);
         reset();
+        setUpdatingRow(undefined)
     });
 
     const handleAddRow = async (newRow: RequestCreateRow) => {
@@ -114,8 +127,6 @@ export const useSmr = () => {
             const newData = baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
 
                 const updateElementInDraft = (draft: any, id: number | null) => {
-                    console.log(response.current)
-                    console.log('updatedRowId=', updatedRowId)
                     for (let i = 0; i < draft.length; i++) {
                         if (draft[i].id === id) {
                             console.log(draft[i])
@@ -128,13 +139,12 @@ export const useSmr = () => {
                         }
                     }
                 };
-                updateElementInDraft(draft, updatedRowId);
+                updateElementInDraft(draft, updatingRow?.id || null);
             });
 
 
             dispatch(newData)
 
-            setUpdatedRowId(null)
         } catch (error) {
             console.error(error);
         }
@@ -142,6 +152,7 @@ export const useSmr = () => {
 
 
     const addRow = (parentId: number) => {
+        reset()
         setShowAddNewRow(true)
         setParentId(parentId)
     }
@@ -187,7 +198,7 @@ export const useSmr = () => {
         removeRow,
         onSubmitSmr,
         setShowAddNewRow,
-        updatedRowId,
-        setUpdatedRowId
+        updatingRowId: updatingRow?.id || null,
+        setUpdatingRow
     }
 }
