@@ -19,8 +19,9 @@ export const Smr = () => {
         removeRow,
         onSubmitSmr,
         setShowAddNewRow,
-        setUpdatedRowId
-    } = useSmr()
+        updatedRowId,
+        setUpdatedRowId,
+          } = useSmr()
 
     useEffect(() => {
         if (isSuccess && !data!.length) {
@@ -44,7 +45,7 @@ export const Smr = () => {
                 <tbody>
                 {data?.map((row) => (
                     <RecursiveRow key={row.id} addRow={addRow} removeRow={removeRow} setUpdatedRowId={setUpdatedRowId}
-                           control={control}       row={row} level={0}/>
+            updatedRowId={updatedRowId}           control={control}       row={row} level={0}/>
                 ))}
 
                 {showAddNewRow && <tr>

@@ -108,17 +108,19 @@ export const useSmr = () => {
 
 
     const handleUpdateRow = async (args: RequestUpdateRow & { rID: number }) => {
-
-
         try {
             const response: RecalculatedRows = await updateRow(args).unwrap();
 
             const newData = baseApi.util.updateQueryData('getTreeRows', undefined, (draft) => {
 
                 const updateElementInDraft = (draft: any, id: number | null) => {
+                    console.log(response.current)
+                    console.log('updatedRowId=', updatedRowId)
                     for (let i = 0; i < draft.length; i++) {
                         if (draft[i].id === id) {
+                            console.log(draft[i])
                             draft[i] = {...draft[i], ...response.current};
+                            console.log(draft[i])
                             return;
                         }
                         if (draft[i].child && draft[i].child.length > 0) {
@@ -128,6 +130,7 @@ export const useSmr = () => {
                 };
                 updateElementInDraft(draft, updatedRowId);
             });
+
 
             dispatch(newData)
 
@@ -184,6 +187,7 @@ export const useSmr = () => {
         removeRow,
         onSubmitSmr,
         setShowAddNewRow,
+        updatedRowId,
         setUpdatedRowId
     }
 }
