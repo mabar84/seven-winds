@@ -3,9 +3,9 @@ import {Control} from "react-hook-form";
 
 import {Add} from "../../assets/icons/Add";
 import {Delete} from "../../assets/icons/Delete";
-import {InputWithController} from "../InpurWithController/InpurWithController";
 import {SmrFormValues} from "../../pages/smr/useSmr";
 import {RowResponse, RowWithChild} from "../../services/types";
+import {InputsForForm} from "../InputsForForm";
 
 import s from './RecursiveRow.module.scss'
 
@@ -40,25 +40,7 @@ export const RecursiveRow = (props: RowProps) => {
     return (
         <>
             {isEditMode
-                ? <tr>
-                    <td className={s.td}>
-                        <div className={s.add}>
-                            <Add/>
-                        </div>
-                    </td>
-                    <td className={s.td}>
-                        <InputWithController control={control} name='rowName'/></td>
-                    <td className={s.td}>
-                        <InputWithController control={control} name='salary' type={'number'}/></td>
-                    <td className={s.td}>
-                        <InputWithController control={control} name='equipmentCosts' type={'number'}/>
-                    </td>
-                    <td className={s.td}>
-                        <InputWithController control={control} name='overheads' type={'number'}/></td>
-                    <td className={s.td}>
-                        <InputWithController control={control} name='estimatedProfit' type={'number'}/>
-                    </td>
-                </tr>
+                ? <InputsForForm withBorder level={level} control={control}/>
                 : <tr className={s.tr} onDoubleClick={onDoubleClickHandler}>
                     <td className={s.td}>
                         <div className={clsx(s.buttons, level && s.buttons_line)}
@@ -79,14 +61,13 @@ export const RecursiveRow = (props: RowProps) => {
                 </tr>
             }
 
-            {
-                row?.child?.length > 0 && row.child.map((child) => (
-                    <RecursiveRow
-                        key={child.id} addRow={addRow} removeRow={removeRow}
-                        setUpdatingRow={setUpdatingRow} setShowAddNewRow={setShowAddNewRow}
-                        control={control} row={child} updatingRowId={updatingRowId}
-                        level={level + 1}
-                    />))
+            {row?.child?.length > 0 && row.child.map((child) => (
+                <RecursiveRow
+                    key={child.id} addRow={addRow} removeRow={removeRow}
+                    setUpdatingRow={setUpdatingRow} setShowAddNewRow={setShowAddNewRow}
+                    control={control} row={child} updatingRowId={updatingRowId}
+                    level={level + 1}
+                />))
             }
         </>
     );

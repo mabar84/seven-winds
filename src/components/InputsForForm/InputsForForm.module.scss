@@ -1,0 +1,17 @@
+.tr {
+  border-top: 1px solid var(--color-borders);
+  border-bottom: 1px solid var(--color-borders);
+}
+
+.td {
+  padding: 16px 12px;
+  color: var(--color-bright-text);
+}
+
+.add {
+  padding: 2px;
+  width: 55px;
+  display: flex;
+  align-items: center;
+  z-index: 1;
+}

@@ -1,11 +1,9 @@
 import {RecursiveRow} from "../../components/Row";
-import {Add} from "../../assets/icons/Add";
-import {InputWithController} from "../../components/InpurWithController/InpurWithController";
 import {useSmr} from "./useSmr";
 import {THead} from "../../components/THead";
+import {InputsForForm} from "../../components/InputsForForm";
 
 import s from './Smr.module.scss'
-import clsx from "clsx";
 
 export const Smr = () => {
     const {
@@ -32,28 +30,10 @@ export const Smr = () => {
                         setUpdatingRow={setUpdatingRow} setShowAddNewRow={setShowAddNewRow}
                         control={control} row={row} updatingRowId={updatingRowId}
                         level={0}
-                    />
-                ))}
+                    />))
+                }
 
-                {showAddNewRow && <tr>
-                    <td className={s.td}>
-                        <div className={clsx(s.add, s.add_wrapper)}>
-                            <Add/>
-                        </div>
-                    </td>
-                    <td className={s.td}>
-                        <InputWithController control={control} name='rowName'/></td>
-                    <td className={s.td}>
-                        <InputWithController control={control} name='salary' type={'number'}/></td>
-                    <td className={s.td}>
-                        <InputWithController control={control} name='equipmentCosts' type={'number'}/>
-                    </td>
-                    <td className={s.td}>
-                        <InputWithController control={control} name='overheads' type={'number'}/></td>
-                    <td className={s.td}>
-                        <InputWithController control={control} name='estimatedProfit' type={'number'}/>
-                    </td>
-                </tr>}
+                {showAddNewRow && <InputsForForm level={2} control={control}/>}
                 </tbody>
             </table>
 
