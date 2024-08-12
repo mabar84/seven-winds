@@ -1,8 +1,7 @@
-import {ComponentPropsWithoutRef, forwardRef, useState} from 'react';
+import {ComponentPropsWithoutRef, forwardRef} from 'react';
+import clsx from "clsx";
 
 import s from './Input.module.scss';
-import clsx from "clsx";
-import {errorNotification} from "../../lib/notifications";
 
 export type InputProps ={error?:string} & ComponentPropsWithoutRef<'input'>;
 
