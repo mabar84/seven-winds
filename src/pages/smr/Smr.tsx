@@ -8,7 +8,6 @@ import s from './Smr.module.scss'
 export const Smr = () => {
     const {
         data,
-        levelForNewRow,
         showAddNewRow,
         updatingRowId,
         control,
@@ -36,7 +35,7 @@ export const Smr = () => {
                     />))
                 }
 
-                {showAddNewRow && <InputsForForm level={levelForNewRow} control={control}/>}
+                {showAddNewRow && <InputsForForm level={0} control={control}/>}
                 </tbody>
             </table>
 
