@@ -18,7 +18,8 @@ export const Smr = () => {
         addRow,
         removeRow,
         onSubmitSmr,
-        setShowAddNewRow
+        setShowAddNewRow,
+        setUpdatedRowId
     } = useSmr()
 
     useEffect(() => {
@@ -42,7 +43,8 @@ export const Smr = () => {
                 </thead>
                 <tbody>
                 {data?.map((row) => (
-                    <RecursiveRow key={row.id} addRow={addRow} removeRow={removeRow} row={row} level={0}/>
+                    <RecursiveRow key={row.id} addRow={addRow} removeRow={removeRow} setUpdatedRowId={setUpdatedRowId}
+                           control={control}       row={row} level={0}/>
                 ))}
 
                 {showAddNewRow && <tr>

@@ -29,10 +29,22 @@ export const baseApi = createApi({
                         url: `/v1/outlay-rows/entity/${ID}/row/${rID}/delete`,
                     }
                 }
+            }),
+            updateRow: builder.mutation({
+                query: (args) => {
+                    console.log(args)
+                    const {rID,...body} = args;
+                    console.log('body=',body)
+                    return {
+                        body,
+                        method: 'POST',
+                        url: `/v1/outlay-rows/entity/${ID}/row/${rID}/update`,
+                    }
+                }
             })
         };
     },
     reducerPath: 'baseApi',
 });
 
-export const {useGetTreeRowsQuery, useCreateRowMutation, useDeleteRowMutation} = baseApi;
+export const {useGetTreeRowsQuery, useCreateRowMutation, useDeleteRowMutation,useUpdateRowMutation} = baseApi;

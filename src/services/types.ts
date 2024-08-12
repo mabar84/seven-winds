@@ -33,6 +33,19 @@ export type RequestCreateRow = {
     supportCosts: number;
 };
 
+export type RequestUpdateRow = {
+    equipmentCosts: number;
+    estimatedProfit: number;
+    machineOperatorSalary: number;
+    mainCosts: number;
+    materials: number;
+    mimExploitation: number;
+    overheads: number;
+    rowName: string;
+    salary: number;
+    supportCosts: number;
+};
+
 export type RecalculatedRows = {
     changed: RowResponse[]
     current: RowResponse
